@@ -19,7 +19,6 @@ import ru.mareanexx.authservice.api.util.JwtAuthenticationFilter
 @Configuration
 @EnableMethodSecurity
 class SpringSecurityConfig(
-    private val userDetailsService: UserDetailsService,
     private val authenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val authenticationFilter: JwtAuthenticationFilter
 ) {

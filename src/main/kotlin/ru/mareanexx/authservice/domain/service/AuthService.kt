@@ -10,6 +10,7 @@ import ru.mareanexx.authservice.domain.model.dto.UserLoginRequest
 import ru.mareanexx.authservice.domain.model.dto.UserRegistrationRequest
 import ru.mareanexx.authservice.domain.model.entity.UserEntity
 import ru.mareanexx.authservice.domain.repository.UserRepository
+import kotlin.math.log
 
 @Service
 class AuthService(
@@ -18,8 +19,7 @@ class AuthService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
 ) {
-
-    fun login(loginDto: UserLoginRequest): String {
+    fun login(loginDto: UserLoginRequest): Pair<String, Int> {
         println("Authenticating user: ${loginDto.email}")
         val authentication: Authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
@@ -31,7 +31,9 @@ class AuthService(
 
         SecurityContextHolder.getContext().authentication = authentication
 
-        return jwtTokenProvider.generateToken(authentication)
+        val user = userRepository.findByEmail(loginDto.email)
+
+        return Pair(jwtTokenProvider.generateToken(authentication), user?.idUser!!)
     }
 
 

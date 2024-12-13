@@ -14,41 +14,26 @@ import ru.mareanexx.authservice.domain.service.AuthService
 class AuthController(
     private val authService: AuthService
 ) {
-    // Build Login REST API
     @PostMapping("/login")
     fun login(@RequestBody loginDto: UserLoginRequest): ResponseEntity<JwtAuthResponse> {
-        val token = authService.login(loginDto)
+        val response = authService.login(loginDto)
 
         val jwtAuthResponse = JwtAuthResponse(
-            accessToken = token
+            accessToken = response.first,
+            idUser = response.second
         )
+        println("Send response json = $jwtAuthResponse")
 
         return ResponseEntity(jwtAuthResponse, HttpStatus.OK)
     }
 
-    // Build Registration REST API
     @PostMapping("/register")
-    fun register(@RequestBody userRequest: UserRegistrationRequest): ResponseEntity<String> {
+    fun register(@RequestBody userRequest: UserRegistrationRequest): ResponseEntity<Map<String, String>> {
         return try {
             authService.register(userRequest)
-            ResponseEntity("User successfully registered!", HttpStatus.CREATED)
+            ResponseEntity(mapOf("message" to "User successfully registered!"), HttpStatus.CREATED)
         } catch (e: IllegalArgumentException) {
-            ResponseEntity("User already exists!", HttpStatus.BAD_REQUEST)
+            ResponseEntity(mapOf("error" to "User already exists!"), HttpStatus.BAD_REQUEST)
         }
-    }
-
-    // для тестирования
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/user")
-    fun getSomeInfo(): ResponseEntity<String> {
-        return ResponseEntity("User HELLO!!!", HttpStatus.OK)
-    }
-
-
-    // для тестирования
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin")
-    fun getSomeInfoAdmin(): ResponseEntity<String> {
-        return ResponseEntity("Admin HELLO!!!", HttpStatus.OK)
     }
 }

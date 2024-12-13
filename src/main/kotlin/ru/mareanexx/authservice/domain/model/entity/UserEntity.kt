@@ -7,11 +7,11 @@ import java.time.LocalDateTime
 @Table(name = "user")
 data class UserEntity(
     @Id
-    val idUser: Int? = null, // Автоматическая генерация ID
+    val idUser: Int? = null,
     val username: String,
     val password: String,
     val email: String,
     val phoneNumber: String,
-    val role: String = "USER", // По умолчанию пользователь
+    val role: String = "USER",
     val createdAt: LocalDateTime = LocalDateTime.now()
 )
